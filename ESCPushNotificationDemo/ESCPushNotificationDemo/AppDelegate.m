@@ -90,13 +90,20 @@
 - (void) application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSData  *apnsToken = [NSData dataWithData:deviceToken];
     
-    NSString *tokenString = [[[apnsToken description]
-                              stringByReplacingOccurrencesOfString: @"<" withString: @""]
-                             stringByReplacingOccurrencesOfString: @">" withString: @""];
+    NSString *tokenString = [self getHexStringForData:apnsToken];
+
     NSLog(@"My token = %@", tokenString);
     
 }
-
+- (NSString *)getHexStringForData:(NSData *)data {
+    NSUInteger length = [data length];
+    char *chars = (char *)[data bytes];
+    NSMutableString *hexString = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < length; i++) {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    return hexString;
+}
 //token获取失败
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"did Fail To Register For Remote Notifications With Error: %@", error);
